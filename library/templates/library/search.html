@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<title>search</title>
+</head>
+<body>
+	<table border="1">
+		{% if context%}
+		<tr bgcolor="66FF33">
+			<th>code</th>
+			<th>book name</th>
+			<th>author</th>
+			<th>return due(if it's on loan)/borrow</th>
+		</tr>
+		{% for list in context%}
+		<tr>
+			<td>{{list.code}}</td>
+			<td>{{list.name}}</td>
+			<td>{{list.author}}</td>
+			<td>{%if list.due != None %} {{list.due}}
+				{% else %}<a href="../../book/borrow/{{list.code}}/"> borrow? </a> {% endif %}</td>
+		</tr>
+		{% endfor %}
+		{% else %}
+		There is no result
+		{% endif %}
+	</table>
+</body>
+</html>

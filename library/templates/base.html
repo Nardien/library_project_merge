@@ -1,0 +1,37 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	<title>Library</title>
+</head>
+<body>
+	<div class="container">
+		{% if messages %}
+			{% for message in messages %}
+				<div class="alert-message alert
+					{% if message.tags == 'info' %}
+						alert-info
+					{% elif message.tags == 'success' %}
+						alert-success
+					{% elif message.tags == 'warning' %}
+						alert-warning
+					{% elif message.tags == 'error' %}
+						alert-danger
+					{% endif %}
+					">{{ message }}</div>
+			{% endfor %}
+		{% endif %}
+
+		<h1>{% block title %}{% endblock %}</h1>
+
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+</html>
