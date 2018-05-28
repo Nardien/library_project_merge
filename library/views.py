@@ -125,6 +125,8 @@ def borrow(request, borrow):
         pass
     book=Book.objects.get(code=borrow)
     book.cid = Client.objects.get(cid=borrowing_cid)
+    from datetime import datetime
+    book.due = datetime.today().strftime("%H:%M")
     book.save()
 
     return render(request, 'library/borrow.html', {'book':book})
@@ -154,5 +156,6 @@ def return_book(request) :
 def return_book_complete(request, return_book) :
     book = get_object_or_404(Book, pk=return_book)
     book.cid = None
+    book.due = None
     book.save()
     return render(request, 'library/return_book_complete.html', {'book':book})
