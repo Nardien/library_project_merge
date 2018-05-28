@@ -21,6 +21,7 @@ from library import views
 from django.conf.urls import include
 
 urlpatterns = [
+    url(r'^$', views.login, name='login'),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.login, name='login'),
     url(
@@ -31,6 +32,11 @@ urlpatterns = [
     url(r'^main/search/', views.search, name='search'),
     url(r'^main/', views.main, name='main'),
     url(r'^book/borrow/(?P<borrow>.+)/$', views.borrow, name='borrow'),
+    url(r'^book/return/(?P<return_book>.+)/$', views.return_book_complete, name='return_book_complete'),
+    url(r'^seminar$', views.seminar, name='seminar'),
+    url(r'^seminar/(?P<slug>.+)/$', views.reservation, name='reservation'),
+    url(r'^staff$', views.staff, name='staff'),
+    url(r'^return$', views.return_book, name='return'),
 
 ]
 

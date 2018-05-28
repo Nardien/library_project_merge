@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Return Book</title>
+    <h1>Borrowed Books</h1>
+  </head>
+  <body>
+    <div>
+      <table width="45%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Code</th>
+	    <th>Name</th>
+	    <th>Author</th>
+	    <th>Due</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for book in books %}
+	  <tr>
+	    <td>{{book.code}}</td>
+	    <td>{{book.name}}</td>
+	    <td>{{book.author}}</td>
+	    <td>{{book.due}}</td>
+      <td><a href="../../book/return/{{book.code}}/"> return </a></td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
+</html>

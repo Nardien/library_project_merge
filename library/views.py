@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import login as django_login, logout as django_logout, authenticate
 
 from .forms import LoginForm
@@ -82,7 +82,10 @@ def main(request):
         print("GOOD!")
         print(request.session['user_cid'])
     form=Form()
-    return render(request, 'library/main.html', {'form':form})
+    borrowing_count = len(Book.objects.all().filter(cid=request.session['user_cid']))
+    # SEMINAR ROOM AUTO RETURNING... IS NEEDED?
+    reserving_count = len(SeminarUse.objects.all().filter(cid=request.session['user_cid']))
+    return render(request, 'library/main.html', {'form':form, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
 
 def search(request):
     form=request.POST['search']
@@ -116,7 +119,7 @@ def search(request):
 def borrow(request, borrow):
     borrowing_cid = request.session['user_cid']
     client = Client.objects.get(cid=borrowing_cid)
-    borrow_limit = 3 if clinet.c_type == 'student' else 5
+    borrow_limit = 3 if client.c_type == 'student' else 5
     if len(Book.objects.all().filter(cid=borrowing_cid)) > borrow_limit :
         # Borrow Permitted
         pass
@@ -138,5 +141,18 @@ def staff(request) :
     return render(request,'library/staff.html', {'cstaff':cstaff,'mstaff':mstaff,'bstaff':bstaff})
 
 def reservation(request, slug) :
+    from datetime import datetime
     seminar = get_object_or_404(SeminarRoom, pk=slug)
+    seminar_use = SeminarUse.objects.create(cid=Client.objects.get(cid=request.session['user_cid']), rname=seminar, date=datetime.today().strftime("%Y-%m-%d"))
     return render(request, 'library/reservation.html', {'seminar':seminar})
+
+def return_book(request) :
+    borrowing_cid = request.session['user_cid']
+    borrowed_book = Book.objects.filter(cid = borrowing_cid)
+    return render(request, 'library/return_book.html', {'books':borrowed_book})
+
+def return_book_complete(request, return_book) :
+    book = get_object_or_404(Book, pk=return_book)
+    book.cid = None
+    book.save()
+    return render(request, 'library/return_book_complete.html', {'book':book})
