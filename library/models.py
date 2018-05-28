@@ -76,6 +76,7 @@ class Staff(models.Model):
     class Meta:
         managed = False
         db_table = 'staff'
+        ordering = ['lname']
 
 class Search(models.Model):
     name=models.CharField(max_length=50)

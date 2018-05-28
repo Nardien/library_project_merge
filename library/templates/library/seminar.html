@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>Seminar room</title>
+    <h1>Available Seminar-rooms</h1>
+  </head>
+  <body>
+    <div>
+      <h3>current state :</h3>
+      <table width="45%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Library</th>
+	    <th>Lender</th>
+	    <th>Date</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for room in usage %}
+	  <tr>
+	    <td>{{room.rname.name}}</td>
+	    <td>{{room.rname.lname.name}}</td>
+	    <td>{{room.cid.cid}}</td>
+	    <td>{{room.date}}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <div>
+      <h3>reservation :</h3>
+      <table width="45%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Available#</th>
+	    <th>Library</th>
+	    <th>Reservation</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for room in seminar %}
+	  <tr>
+	    <td>{{room.name}}</td>
+	    <td>{{room.available_num}}</td>
+	    <td>{{room.lname.name}}</td>
+	    <td><a href="{% url 'reservation' slug=room.pk %}">click</a></td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
+</html>

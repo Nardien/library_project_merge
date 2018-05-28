@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <style>th,td{padding:3px;}</style>
+    <title>staff info</title>
+    <h1>Staff information</h1>
+  </head>
+  <body>
+    <p>Information of entire staff from 3 libarary</p>
+    <div>
+      <h3>Cultural Library</h3>
+      <table width="50%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Id</th>
+	    <th>Type</th>
+	    <th>Phone#</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for member in cstaff %}
+	  <tr>
+	    <td>{{member.name}}</td>
+	    <td>{{member.sid}}</td>
+	    <td>{{member.s_type}}</td>
+	    <td>{{member.phone_n}}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Munji Library</h3>
+      <table width="50%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Id</th>
+	    <th>Type</th>
+	    <th>Phone#</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for member in mstaff %}
+	  <tr>
+	    <td>{{member.name}}</td>
+	    <td>{{member.sid}}</td>
+	    <td>{{member.s_type}}</td>
+	    <td>{{member.phone_n}}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <div>
+      <h3>Business Library</h3>
+      <table width="50%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Id</th>
+	    <th>Type</th>
+	    <th>Phone#</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for member in bstaff %}
+	  <tr>
+	    <td>{{member.name}}</td>
+	    <td>{{member.sid}}</td>
+	    <td>{{member.s_type}}</td>
+	    <td>{{member.phone_n}}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
+</html>

@@ -125,3 +125,18 @@ def borrow(request, borrow):
     book.save()
 
     return render(request, 'library/borrow.html', {'book':book})
+
+def seminar(request) :
+    usage = SeminarUse.objects.all()
+    seminar = SeminarRoom.objects.all()
+    return render(request, 'library/seminar.html', {'seminar':seminar, 'usage':usage})
+
+def staff(request) :
+    cstaff = Staff.objects.filter(lname = 'Cultural')
+    mstaff = Staff.objects.filter(lname = 'Munji')
+    bstaff = Staff.objects.filter(lname = 'Business')
+    return render(request,'library/staff.html', {'cstaff':cstaff,'mstaff':mstaff,'bstaff':bstaff})
+
+def reservation(request, slug) :
+    seminar = get_object_or_404(SeminarRoom, pk=slug)
+    return render(request, 'library/reservation.html', {'seminar':seminar})
