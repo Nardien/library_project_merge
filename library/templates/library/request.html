@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<title>BOOK REQUEST</title>
+</head>
+<body>
+  <form action="" method="post">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="form-group">
+      {{ field.label_tag }}
+      {{ field }}
+    </div>
+  {% endfor %}
+  <button> Request </button>
+  </form>
+  <div>
+    <h3>List of Requests</h3>
+    <table width="45%" style="text-align:right">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Author</th>
+    <th>Genre</th>
+    <th>State</th>
+  </tr>
+</thead>
+<tbody>
+  {% for book in books %}
+  <tr>
+    <td>{{book.name}}</td>
+    <td>{{book.author}}</td>
+    <td>{{book.genre}}</td>
+    <td>{{book.state}}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+    </table>
+  </div>
+  <br>
+  <a href="{% url 'main' %}"><button >back to main page</button></a><br/>
+</body>
+</html>

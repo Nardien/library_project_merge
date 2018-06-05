@@ -18,13 +18,14 @@
 			<td>{{list.code}}</td>
 			<td>{{list.name}}</td>
 			<td>{{list.author}}</td>
-			<td>{%if list.due != None %} {{list.due}}
-				{% else %}<a href="../../book/borrow/{{list.code}}/"> borrow? </a> {% endif %}</td>
+			<td>{%if list.date != None %} {{list.date}}
+				{% else %}<a href="../../book/borrow/{{list.code}}"> borrow? </a> {% endif %}</td>
 		</tr>
 		{% endfor %}
 		{% else %}
 		There is no result
 		{% endif %}
 	</table>
+  <p><a href="{% url 'main' %}">back</a></P>
 </body>
 </html>

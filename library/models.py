@@ -14,16 +14,39 @@ from django.contrib.auth.models import User
 
 class Book(models.Model):
     code = models.CharField(primary_key=True, max_length=15)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=100)
     author = models.CharField(max_length=100, blank=True, null=True)
     genre = models.CharField(max_length=3, blank=True, null=True)
-    due = models.TimeField(blank=True, null=True)
-    cid = models.ForeignKey('Client', models.DO_NOTHING, db_column='Cid', blank=True, null=True)  # Field name made lowercase.
+    #due = models.TimeField(blank=True, null=True)
+    #cid = models.ForeignKey('Client', models.DO_NOTHING, db_column='Cid', blank=True, null=True)  # Field name made lowercase.
     lname = models.ForeignKey('Library', models.DO_NOTHING, db_column='Lname', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'book'
+
+class BookChecked(models.Model):
+    bcode = models.ForeignKey(Book, models.DO_NOTHING, db_column='bcode', primary_key=True)
+    ccode = models.ForeignKey('Client', models.DO_NOTHING, db_column='ccode')
+    state = models.CharField(max_length=9)
+    date = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'book_checked'
+        unique_together = (('bcode', 'ccode', 'date', 'state'),)
+
+class BookRequest(models.Model):
+    name = models.CharField(primary_key=True, max_length=30)
+    author = models.CharField(max_length=100, blank=True, null=True)
+    genre = models.CharField(max_length=3, blank=True, null=True)
+    cid = models.ForeignKey('Client', models.DO_NOTHING, db_column='Cid')  # Field name made lowercase.
+    state = models.CharField(max_length=6, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'book_request'
+        unique_together = (('name', 'cid'),)
 
 
 class Client(models.Model):
@@ -59,6 +82,7 @@ class SeminarUse(models.Model):
     cid = models.ForeignKey(Client, models.DO_NOTHING, db_column='Cid', primary_key=True)  # Field name made lowercase.
     rname = models.ForeignKey(SeminarRoom, models.DO_NOTHING, db_column='Rname')  # Field name made lowercase.
     date = models.DateField(db_column='DATE')  # Field name made lowercase.
+    state = models.CharField(max_length=6)
 
     class Meta:
         managed = False

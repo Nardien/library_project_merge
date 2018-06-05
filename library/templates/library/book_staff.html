@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>Book Staff Page</title>
+    <h1>List of Book Buying Order</h1>
+  </head>
+  <body>
+    <div>
+      <table width="45%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>Author</th>
+	    <th>Genre</th>
+      <th>RequesterID</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for book in books %}
+	  <tr>
+	    <td>{{book.name}}</td>
+	    <td>{{book.author}}</td>
+      <td>{{book.genre}}</td>
+      <td>{{book.cid.cid}}</td>
+      <td><a href="{% url 'book_staff_accept' book=book.name %}"> ACCEPT </a></td>
+      <td><a href="{% url 'book_staff_decline' book=book.name %}"> DECLINE </a></td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
+</html>

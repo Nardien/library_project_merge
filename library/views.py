@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, HttpResponse
 from django.contrib.auth import login as django_login, logout as django_logout, authenticate
 
 from .forms import LoginForm
@@ -49,11 +49,17 @@ def login(request):
                     pass"""
             if username == password :
                 try :
-                    context = Client.objects.get(cid=username)
-                    request.session['user_cid'] = context.cid
+                    if username[0] == 'a' :
+                        context = Staff.objects.get(sid=username[1:])
+                        request.session['user_id'] = context.sid
+                        request.session['authorization'] = 1
+                    else :
+                        context = Client.objects.get(cid=username)
+                        request.session['user_id'] = context.cid
+                        request.session['authorization'] = 0
                     #return render(request, 'library/main.html', {'form':form})
                     return redirect('main')
-                except Client.DoesNotExist :
+                except Client.DoesNotExist or Staff.DoesNotExist :
                     pass
             #if user:
                 # Django의 auth앱에서 제공하는 login함수를 실행해 앞으로의 요청/응답에 세션을 유지한다
@@ -71,21 +77,33 @@ def login(request):
 
 def logout(request):
     try:
-        del request.session['user_cid']
+        del request.session['user_id']
     except KeyError:
         pass
 
     return render(request, 'library/logout.html')
 
 def main(request):
-    if request.session.get('user_cid') :
+    if request.session.get('user_id') :
         print("GOOD!")
-        print(request.session['user_cid'])
-    form=Form()
-    borrowing_count = len(Book.objects.all().filter(cid=request.session['user_cid']))
-    # SEMINAR ROOM AUTO RETURNING... IS NEEDED?
-    reserving_count = len(SeminarUse.objects.all().filter(cid=request.session['user_cid']))
-    return render(request, 'library/main.html', {'form':form, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
+        print(request.session['user_id'])
+        print(request.session['authorization'])
+    else :
+        # Rendering error page
+        pass
+
+    # Staff Case
+    if int(request.session['authorization']) :
+        form=Form()
+        staff = Staff.objects.get(sid=request.session['user_id'])
+        return render(request, 'library/main_staff.html', {'form':form, 'job_name':staff.s_type})
+    # Client Case
+    else :
+        form=Form()
+        borrowing_count = len(BookChecked.objects.all().filter(state='borrowing').filter(ccode=request.session['user_id']))
+        # SEMINAR ROOM AUTO RETURNING... IS NEEDED?
+        reserving_count = len(SeminarUse.objects.all().filter(cid=request.session['user_id'], state='accept'))
+        return render(request, 'library/main.html', {'form':form, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
 
 def search(request):
     form=request.POST['search']
@@ -107,6 +125,7 @@ def search(request):
     for i in form[1:]:
     	string+='|' +i
     string+=')'
+
     if ref=="all":
     	context=Book.objects.filter(Q(name__regex=string)| Q(author__regex=string) )
     elif ref=="name":
@@ -114,27 +133,60 @@ def search(request):
     elif ref=="author" :
     	context=Book.objects.filter(Q(author__regex=string))
 
-    return render(request, 'library/search.html', {'context':context.order_by('name')})
+    borrowing = BookChecked.objects.filter(state='borrowing')
+
+    return render(request, 'library/search.html', {'context':context.order_by('name'), 'borrowing':borrowing})
 
 def borrow(request, borrow):
-    borrowing_cid = request.session['user_cid']
+    borrowing_cid = request.session['user_id']
     client = Client.objects.get(cid=borrowing_cid)
     borrow_limit = 3 if client.c_type == 'student' else 5
-    if len(Book.objects.all().filter(cid=borrowing_cid)) > borrow_limit :
+    if len(BookChecked.objects.all().filter(ccode=borrowing_cid).filter(state='borrowing')) > borrow_limit :
         # Borrow Permitted
+        return HttpResponse("You cannot borrow more than {} books".format(borrow_limit))
         pass
-    book=Book.objects.get(code=borrow)
-    book.cid = Client.objects.get(cid=borrowing_cid)
+    #book=Book.objects.get(code=borrow)
     from datetime import datetime
-    book.due = datetime.today().strftime("%H:%M")
-    book.save()
+    #book.due = datetime.today().strftime("%H:%M")
+    print("What is borrow?")
+    borrowed_book = Book.objects.get(pk=borrow)
+    borrow_date = datetime.today().strftime("%Y-%m-%d")
+    if len(BookChecked.objects.filter(bcode=borrow, ccode=borrowing_cid, date=borrow_date)) > 0 :
+        return HttpResponse("Cannot borrow same book at one day.".format(borrow_limit))
+    BookChecked.objects.create(bcode=borrowed_book, ccode=Client.objects.get(pk=borrowing_cid), state='borrowing', date=borrow_date)
+    #book.cid = Client.objects.get(cid=borrowing_cid)
+    #book.save()
 
-    return render(request, 'library/borrow.html', {'book':book})
+    return render(request, 'library/borrow.html', {'book_name':borrowed_book.name, 'borrow_date':borrow_date})
+
+def seminar_show(request) :
+    seminars = SeminarUse.objects.filter(cid=Client.objects.get(cid=request.session['user_id']))
+    return render(request, 'library/seminar_show.html', {'seminars':seminars})
 
 def seminar(request) :
-    usage = SeminarUse.objects.all()
-    seminar = SeminarRoom.objects.all()
-    return render(request, 'library/seminar.html', {'seminar':seminar, 'usage':usage})
+    if request.method == 'POST' :
+        request_form = SeminarForm(request.POST)
+        if request_form.is_valid() :
+            borrow_date = request_form.cleaned_data['borrow_date']
+        room_name = request.POST['room']
+        seminar = get_object_or_404(SeminarRoom, pk=room_name)
+        import datetime
+        if datetime.date.today() > borrow_date :
+            return HttpResponse("Please setting borrow date should be after today")
+        if len(SeminarUse.objects.filter(cid=Client.objects.get(cid=request.session['user_id']), rname=seminar)) :
+            return HttpResponse("Cannot borrow same seminar room more than once")
+        SeminarUse.objects.create(cid=Client.objects.get(cid=request.session['user_id']), rname=seminar, date=borrow_date, state='ready')
+        return render(request, 'library/reservation.html', {'seminar':seminar})
+    else :
+        form = SeminarForm()
+        usage = SeminarUse.objects.filter(state='accept')
+        seminar = SeminarRoom.objects.all()
+        return render(request, 'library/seminar.html', {'form':form, 'seminar':seminar, 'usage':usage})
+
+def seminar_confirm(request, client, seminar) :
+    SeminarUse.objects.filter(cid=client, rname=seminar, state='reject').delete()
+    return render(request, 'library/complete.html', {'title':'REJECT confirmed', 'content':'You confirm seminar room reservation request rejected'})
+
 
 def staff(request) :
     cstaff = Staff.objects.filter(lname = 'Cultural')
@@ -143,19 +195,106 @@ def staff(request) :
     return render(request,'library/staff.html', {'cstaff':cstaff,'mstaff':mstaff,'bstaff':bstaff})
 
 def reservation(request, slug) :
-    from datetime import datetime
+    if request.method == 'POST' :
+        request_form = SeminarForm(request.POST)
+        if request_form.is_valid() :
+            borrow_date = request_form.cleaned_data['borrow_date']
+            print(borrow_date)
+    else :
+        from datetime import datetime
+        borrow_date = datetime.today().strftime("%Y-%m-%d")
     seminar = get_object_or_404(SeminarRoom, pk=slug)
-    seminar_use = SeminarUse.objects.create(cid=Client.objects.get(cid=request.session['user_cid']), rname=seminar, date=datetime.today().strftime("%Y-%m-%d"))
+    seminar_use = SeminarUse.objects.create(cid=Client.objects.get(cid=request.session['user_id']), rname=seminar, date=borrow_date, state='ready')
     return render(request, 'library/reservation.html', {'seminar':seminar})
 
 def return_book(request) :
-    borrowing_cid = request.session['user_cid']
-    borrowed_book = Book.objects.filter(cid = borrowing_cid)
+    borrowing_cid = request.session['user_id']
+    borrowed_book = BookChecked.objects.filter(ccode = borrowing_cid).filter(state='borrowing')
     return render(request, 'library/return_book.html', {'books':borrowed_book})
 
 def return_book_complete(request, return_book) :
+    print(return_book)
     book = get_object_or_404(Book, pk=return_book)
-    book.cid = None
-    book.due = None
-    book.save()
+    book_record= BookChecked.objects.filter(bcode=return_book, state='borrowing', ccode=request.session['user_id']).update(state='returned')
     return render(request, 'library/return_book_complete.html', {'book':book})
+
+def request_book(request) :
+    if request.method == 'POST':
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid() :
+            book_name = request_form.cleaned_data['book_name']
+            author = request_form.cleaned_data['author']
+            genre = request_form.cleaned_data['genre']
+            new_book_request = BookRequest.objects.create(name=book_name, author=author, genre=genre,
+                cid=Client.objects.get(cid=request.session['user_id']), state='ready')
+
+            print(book_name, author, genre)
+        return redirect('request')
+
+    else :
+        form = RequestForm()
+        id = request.session['user_id']
+        request_queue = BookRequest.objects.filter(cid=request.session['user_id'])
+
+        return render(request, 'library/request.html', {'form':form, 'books':request_queue})
+
+
+
+def book_staff(request) :
+    id = request.session['user_id']
+    staff = Staff.objects.get(sid=id)
+    if staff.s_type != 'librarian' and staff.s_type != 'adm' :
+        return HttpResponse("You are NOT allowed to access this section.")
+
+    else :
+        books = BookRequest.objects.all().filter(state='ready')
+        return render(request, 'library/book_staff.html', {'books':books})
+
+
+def book_staff_accept(request, book) :
+    book_request = BookRequest.objects.get(name=book)
+    name = book_request.name
+    author = book_request.author
+    genre = book_request.genre
+    book_request.state = 'accept'
+    book_request.save()
+
+    # Save Book
+    # 중복 책 경우 제외... 나중에 구현
+    lastest_code = key = Book.objects.latest('code').code
+    new_code = 'A' + str(int(lastest_code[1:]) + 1)
+
+    Book.objects.create(code=new_code, name=name, author=author, genre=genre, lname=Library.objects.get(name='Cultural'))
+
+    return render(request, 'library/complete.html', {'title':'REQUEST ACCEPTED', 'content':'Book request processed successfully'})
+
+def book_staff_decline(request, book) :
+    book_request = BookRequest.objects.filter(name=book)
+    book_request.delete()
+
+    return render(request, 'library/complete.html', {'title':'REQUEST REJECTED', 'content':'Book request processed successfully'})
+
+
+
+def seminar_staff(request) :
+    id = request.session['user_id']
+    staff = Staff.objects.get(sid=id)
+    if staff.s_type != 'room_adm' and staff.s_type != 'adm' :
+        return HttpResponse("You are NOT allowed to access this section.")
+    else :
+        seminars = SeminarUse.objects.all().filter(state='ready')
+        return render(request, 'library/seminar_staff.html', {'seminars':seminars})
+
+
+def seminar_staff_accept(request, client, seminar) :
+    seminar_use = SeminarUse.objects.filter(cid=client, rname=seminar).update(state='accept')
+    #seminar_use.state = 'accept'
+    #seminar_use.save()
+    #print('direct to new page')
+    return render(request, 'library/complete.html', {'title':'REQUEST ACCEPTED', 'content':'Process Complete.'})
+
+def seminar_staff_decline(request, client, seminar) :
+    seminar_use = SeminarUse.objects.filter(cid=client, rname=seminar).update(state='reject')
+    #seminar_use.state = 'reject'
+    #seminar_use.save()
+    return render(request, 'library/complete.html', {'title':'REQUEST REJECTED', 'content':'Processc Complete.'})

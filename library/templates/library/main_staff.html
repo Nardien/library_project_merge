@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>main</title>
+</head>
+<body>
+  <h1 align="center">KAIST library service ADMINISTRAION page</h1>
+  <h2 align="center">You are logined as {{ job_name }}</h2>
+  <br>
+  <p align="center">
+  <a href="{% url 'book_staff' %}"><button>Book Admin Page</button></a>
+  <a href="{% url 'seminar_staff' %}"><button>Seminar Room Admin Page</button></a>
+  </p>
+</body>

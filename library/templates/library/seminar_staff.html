@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>SeminarRoom Staff Page</title>
+    <h1>Seminar Room Reservation Requests</h1>
+  </head>
+  <body>
+    <div>
+      <table width="45%" style="text-align:right">
+	<thead>
+	  <tr>
+	    <th>Name</th>
+	    <th>RequesterID</th>
+      <th>Reserving Date</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for seminar in seminars %}
+	  <tr>
+	    <td>{{seminar.rname.name}}</td>
+      <td>{{seminar.cid.cid}}</td>
+      <td>{{seminar.date}}</td>
+      <td><a href="{% url 'seminar_staff_accept' client=seminar.cid.cid seminar=seminar.rname.name %}"> ACCEPT </a></td>
+      <td><a href="{% url 'seminar_staff_decline' client=seminar.cid.cid seminar=seminar.rname.name %}"> DECLINE </a></td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
+</html>

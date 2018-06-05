@@ -11,7 +11,7 @@
 	  <tr>
 	    <th>Name</th>
 	    <th>Library</th>
-	    <th>Lender</th>
+	    <th>Render</th>
 	    <th>Reserving Date</th>
 	  </tr>
 	</thead>
@@ -44,7 +44,17 @@
 	    <td>{{room.name}}</td>
 	    <td>{{room.available_num}}</td>
 	    <td>{{room.lname.name}}</td>
-	    <td><a href="{% url 'reservation' slug=room.pk %}">click</a></td>
+      <td><form action="" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-group">
+            {{ field }}
+            <input type="hidden" name="room" value="{{room.name}}">
+            <button>reserve</button>
+          </div>
+        {% endfor %}
+      </form></td>
+      <td></td>
 	  </tr>
 	  {% endfor %}
 	</tbody>

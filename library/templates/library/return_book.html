@@ -17,11 +17,11 @@
 	<tbody>
 	  {% for book in books %}
 	  <tr>
-	    <td>{{book.code}}</td>
-	    <td>{{book.name}}</td>
-	    <td>{{book.author}}</td>
-	    <td>{{book.due}}</td>
-      <td><a href="../../book/return/{{book.code}}/"> return </a></td>
+	    <td>{{book.bcode.code}}</td>
+	    <td>{{book.bcode.name}}</td>
+	    <td>{{book.bcode.author}}</td>
+	    <td>{{book.date}}</td>
+      <td><a href="../../book/return/{{book.bcode.code}}/"> return </a></td>
 	  </tr>
 	  {% endfor %}
 	</tbody>
