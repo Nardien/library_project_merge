@@ -40,8 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'library',
-    'my_user',
-    'debug_toolbar',
 
 ]
 
@@ -53,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 
@@ -84,10 +81,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'library2',
-        'USER': 'root',
-        'PASSWORD': 'kang',
-        'HOST': 'localhost',
+        'NAME': 'Nardien$library2',
+        'USER': 'Nardien',
+        'PASSWORD': 'drakedog22',
+        'HOST': 'Nardien.mysql.pythonanywhere-services.com',
         'PORT': "",
         'OPTIONS' : {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",

@@ -27,6 +27,26 @@
 		<a href="{% url 'seminar' %}"><button>Seminar room Reservation System</button></a>
 		<a href="{% url 'request' %}"><button>Book Buying Request</button></a>
 	</div>
+    <br>
+    <div align="center">
+        <h3> POPULAR BOOK </h3>
+        <table width="45%" style="text-align:center">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Popularity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in ranking %}
+                <tr>
+                    <td>{{ book.name }}</td>
+                    <td>{{ book.cnt }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 	<div align="right">
 		<a href="{% url 'logout' %}"><button type="submit">로그아웃</button></a>
 	</div>

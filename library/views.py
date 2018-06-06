@@ -100,10 +100,11 @@ def main(request):
     # Client Case
     else :
         form=Form()
+        ranking = popular_book.objects.all()[:10]
         borrowing_count = len(BookChecked.objects.all().filter(state='borrowing').filter(ccode=request.session['user_id']))
         # SEMINAR ROOM AUTO RETURNING... IS NEEDED?
         reserving_count = len(SeminarUse.objects.all().filter(cid=request.session['user_id'], state='accept'))
-        return render(request, 'library/main.html', {'form':form, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
+        return render(request, 'library/main.html', {'form':form, 'ranking':ranking, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
 
 def search(request):
     form=request.POST['search']

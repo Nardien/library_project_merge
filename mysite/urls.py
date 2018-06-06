@@ -21,7 +21,7 @@ from library import views
 from django.conf.urls import include
 
 urlpatterns = [
-    url(r'^$', views.login, name='login'),
+    url(r'^$', views.login, name='login'),    
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', views.login, name='login'),
     url(
@@ -58,8 +58,3 @@ urlpatterns = [
         'template_name': 'login.html'
     }
 ),"""
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls))
-    ]
