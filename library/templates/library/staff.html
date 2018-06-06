@@ -1,14 +1,37 @@
+{% load staticfiles %}
 <html>
   <head>
-    <style>th,td{padding:3px;}</style>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet" type="text/css"> 
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet"> 
+    <style>
+	table, th, td {
+     		border: 1px solid #bcbcbc;
+      	}
+	table{
+		width:50%;
+		text-align:right;
+	}
+	th{
+		text-align:center;
+		padding:3px;
+		width:150px;
+	}	
+	td{
+		text-align:right;
+		padding:3px;
+	}
+    </style>
     <title>staff info</title>
     <h1>Staff information</h1>
   </head>
   <body>
-    <p>Information of entire staff from 3 libarary</p>
+    <br>
     <div>
-      <h3>Cultural Library</h3>
-      <table width="50%" style="text-align:right">
+      <h3><font color="#6A5ACD">Cultural Library</font></h3>
+      <table>
 	<thead>
 	  <tr>
 	    <th>Name</th>
@@ -30,8 +53,8 @@
       </table>
     </div>
     <div>
-      <h3>Munji Library</h3>
-      <table width="50%" style="text-align:right">
+      <h3><font color="#6A5ACD">Munji Library</font></h3>
+      <table>
 	<thead>
 	  <tr>
 	    <th>Name</th>
@@ -53,8 +76,8 @@
       </table>
     </div>
     <div>
-      <h3>Business Library</h3>
-      <table width="50%" style="text-align:right">
+      <h3><font color="#6A5ACD">Business Library</font></h3>
+      <table>
 	<thead>
 	  <tr>
 	    <th>Name</th>
@@ -75,6 +98,7 @@
 	</tbody>
       </table>
     </div>
+    <br>
     <p><a href="{% url 'main' %}">back</a></P>
   </body>
 </html>
