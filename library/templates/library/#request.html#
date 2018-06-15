@@ -17,7 +17,6 @@ B<!DOCTYPE html>
       text-align:right;
       }
       th{
-      background-color:#bbdefb; 
       text-align:center;
       padding:3px;
       width:150px;
@@ -32,15 +31,13 @@ B<!DOCTYPE html>
   <body>
     <br>
     <form action="" method="post">
-      <fieldset style="width:30%">
-	{% csrf_token %}
-	{% for field in form %}
-	<div class="form-group">
-	  {{ field.label_tag }}
-	  {{ field }}
-	</div>
-	{% endfor %}
-      </fieldset>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+	{{ field.label_tag }}
+	{{ field }}
+      </div>
+      {% endfor %}
       <button> Request </button>
     </form>
     <div>

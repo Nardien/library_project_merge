@@ -1,5 +1,27 @@
+{% load staticfiles %}
 <html>
   <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet" type="text/css"> 
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet"> 
+    <style>
+      table, th, td {
+      border: 1px solid #bcbcbc;
+      }
+      table{
+      width:45%;
+      text-align:right;
+      }
+      th{
+      background-color:#bbdefb;
+      text-align:center;
+      }
+      td{
+      text-align:center;
+      }
+    </style>
     <title>Seminar room</title>
     <h1>Available Seminar-rooms</h1>
   </head>
@@ -29,7 +51,7 @@
     </div>
     <div>
       <h3>reservation :</h3>
-      <table width="45%" style="text-align:right">
+      <table style="text-align:right">
 	<thead>
 	  <tr>
 	    <th>Name</th>
@@ -44,17 +66,17 @@
 	    <td>{{room.name}}</td>
 	    <td>{{room.available_num}}</td>
 	    <td>{{room.lname.name}}</td>
-      <td><form action="" method="post">
-        {% csrf_token %}
-        {% for field in form %}
-          <div class="form-group">
-            {{ field }}
-            <input type="hidden" name="room" value="{{room.name}}">
-            <button>reserve</button>
-          </div>
-        {% endfor %}
-      </form></td>
-      <td></td>
+	    <td><form action="" method="post">
+		{% csrf_token %}
+		{% for field in form %}
+		<div class="form-group">
+		  {{ field }}
+		  <input type="hidden" name="room" value="{{room.name}}">
+		  <button>reserve</button>
+		</div>
+		{% endfor %}
+	    </form></td>
+	    <td></td>
 	  </tr>
 	  {% endfor %}
 	</tbody>

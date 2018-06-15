@@ -106,9 +106,9 @@ class Search(models.Model):
     name=models.CharField(max_length=50)
 
 class popular_book(models.Model):
-    name=models.CharField(db_column='name', max_length=100)
+    name=models.CharField(primary_key=True, db_column='name', max_length=100)
     cnt=models.IntegerField(db_column='num_of_borrow')
                 
     class Meta:
         managed = False
-        db_table = 'p_book'
+        db_table = 'popular_book'

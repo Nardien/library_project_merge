@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import redirect, get_object_or_404, HttpResponse
+from django.shortcuts import redirect, get_object_or_404, HttpResponse, render_to_response
 from django.contrib.auth import login as django_login, logout as django_logout, authenticate
 
 from .forms import LoginForm
@@ -104,7 +104,16 @@ def main(request):
         borrowing_count = len(BookChecked.objects.all().filter(state='borrowing').filter(ccode=request.session['user_id']))
         # SEMINAR ROOM AUTO RETURNING... IS NEEDED?
         reserving_count = len(SeminarUse.objects.all().filter(cid=request.session['user_id'], state='accept'))
-        return render(request, 'library/main.html', {'form':form, 'ranking':ranking, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
+        sum = 0
+        import datetime
+        date = datetime.datetime.now()
+        book = BookChecked.objects.all().filter(ccode=request.session['user_id'], state='borrowing')
+        for iter in book :
+            delta = date-datetime.datetime.strptime(str(iter.date), "%Y-%m-%d")
+            if int(delta.days) >= 0:
+                sum += int(delta.days)*100
+
+        return render(request, 'library/main.html', {'fee':sum, 'form':form, 'ranking':ranking, 'borrowing_count':borrowing_count, 'reserving_count':reserving_count})
 
 def search(request):
     form=request.POST['search']
@@ -142,19 +151,24 @@ def borrow(request, borrow):
     borrowing_cid = request.session['user_id']
     client = Client.objects.get(cid=borrowing_cid)
     borrow_limit = 3 if client.c_type == 'student' else 5
-    if len(BookChecked.objects.all().filter(ccode=borrowing_cid).filter(state='borrowing')) > borrow_limit :
+    if len(BookChecked.objects.all().filter(ccode=borrowing_cid).filter(state='borrowing')) > borrow_limit - 1 :
         # Borrow Permitted
-        return HttpResponse("You cannot borrow more than {} books".format(borrow_limit))
-        pass
+        #return HttpResponse("You cannot borrow more than {} books".format(borrow_limit))
+        return render_to_response('library/alarm.html', {'message':'You cannot borrow more than {} books'.format(borrow_limit)})
     #book=Book.objects.get(code=borrow)
-    from datetime import datetime
+    import datetime
     #book.due = datetime.today().strftime("%H:%M")
     print("What is borrow?")
     borrowed_book = Book.objects.get(pk=borrow)
-    borrow_date = datetime.today().strftime("%Y-%m-%d")
-    if len(BookChecked.objects.filter(bcode=borrow, ccode=borrowing_cid, date=borrow_date)) > 0 :
-        return HttpResponse("Cannot borrow same book at one day.".format(borrow_limit))
-    BookChecked.objects.create(bcode=borrowed_book, ccode=Client.objects.get(pk=borrowing_cid), state='borrowing', date=borrow_date)
+    #borrow_date = datetime.today().strftime("%Y-%m-%d")
+    borrow_date = datetime.datetime.now() + datetime.timedelta(days=2)
+    if len(BookChecked.objects.filter(bcode=borrow, ccode=borrowing_cid, state='borrowing')) > 0 :
+        #return HttpResponse("Cannot borrow already borrowed book")
+        return render_to_response('library/alarm.html', {'message':'Cannot borrow already borrowed book'})
+    if len(BookChecked.objects.filter(bcode=borrow, ccode=borrowing_cid, date=borrow_date.strftime("%Y-%m-%d"))) > 0 :
+        #return HttpResponse("Cannot borrow same book at same day")
+        return render_to_response('library/alarm.html', {'message':'Cannot borrow same book at same bay'}) 
+    BookChecked.objects.create(bcode=borrowed_book, ccode=Client.objects.get(pk=borrowing_cid), state='borrowing', date=borrow_date.strftime("%Y-%m-%d"))
     #book.cid = Client.objects.get(cid=borrowing_cid)
     #book.save()
 

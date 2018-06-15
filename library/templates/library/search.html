@@ -1,31 +1,56 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang='en'>
-<head>
-	<meta charset='UTF-8'>
-	<title>search</title>
-</head>
-<body>
-	<table border="1">
-		{% if context%}
-		<tr bgcolor="66FF33">
-			<th>code</th>
-			<th>book name</th>
-			<th>author</th>
-			<th>return due(if it's on loan)/borrow</th>
-		</tr>
-		{% for list in context%}
-		<tr>
-			<td>{{list.code}}</td>
-			<td>{{list.name}}</td>
-			<td>{{list.author}}</td>
-			<td>{%if list.date != None %} {{list.date}}
-				{% else %}<a href="../../book/borrow/{{list.code}}"> borrow? </a> {% endif %}</td>
-		</tr>
-		{% endfor %}
-		{% else %}
-		There is no result
-		{% endif %}
-	</table>
-  <p><a href="{% url 'main' %}">back</a></P>
-</body>
+  <head>
+    <meta charset='UTF-8'>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+    <style>
+      table, th, td {
+      border: 1px solid #bcbcbc;
+      }
+      table{
+      width:55%;
+      text-align:right;
+      }
+      th{
+      text-align:center;
+      padding:3px;
+      background-color:#bbdefb;
+      }
+      td{
+      text-align:center;
+      padding:3px;
+      }
+    </style>
+    <title>search</title>
+  </head>
+  <body>
+    <br>
+    <table>
+      {% if context%}
+      <tr>
+	<th>code</th>
+	<th>book name</th>
+	<th>author</th>
+	<th>borrow</th>
+      </tr>
+      {% for list in context%}
+      <tr>
+	<td>{{list.code}}</td>
+	<td>{{list.name}}</td>
+	<td>{{list.author}}</td>
+	<td>{%if list.date != None %} {{list.date}}
+	  {% else %}<a href="../../book/borrow/{{list.code}}"> borrow? </a> {% endif %}</td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      There is no result
+      {% endif %}
+    </table>
+    <p><a href="{% url 'main' %}">back</a></P>
+  </body>
 </html>

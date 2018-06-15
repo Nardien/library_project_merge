@@ -1,25 +1,50 @@
+{% load staticfiles %}
 <html>
   <head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet" type="text/css"> 
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet"> 
+    <style>
+      table, th, td {
+      border: 1px solid #bcbcbc;
+      }
+      table{
+      width:45%;
+      text-align:right;
+      }
+      th{
+      text-align:center;
+      padding:3px;
+      background-color:#bbdefb;
+      width:150px;
+      }
+      td{
+      text-align:center;
+      padding:3px;
+      }
+    </style>
     <title>SeminarRoom Client Page</title>
     <h1>List of My Seminar Room Reservation Requests</h1>
   </head>
   <body>
     <div>
-      <table width="45%" style="text-align:right">
+      <table>
 	<thead>
 	  <tr>
 	    <th>Name</th>
-      <th>Reserving Date</th>
-      <th>State</th>
+	    <th>Reserving Date</th>
+	    <th>State</th>
 	  </tr>
 	</thead>
 	<tbody>
 	  {% for seminar in seminars %}
 	  <tr>
 	    <td>{{seminar.rname.name}}</td>
-      <td>{{seminar.date}}</td>
-      <td>{% if seminar.state == 'reject' %} <a href="{% url 'seminar_confirm' client=seminar.cid.cid seminar=seminar.rname.name %}">REJECT CONFIRM</a>
-        {% else %} {{seminar.state}} {% endif %}</td>
+	    <td>{{seminar.date}}</td>
+	    <td>{% if seminar.state == 'reject' %} <a href="{% url 'seminar_confirm' client=seminar.cid.cid seminar=seminar.rname.name %}">REJECT CONFIRM</a>
+              {% else %} {{seminar.state}} {% endif %}</td>
 	  </tr>
 	  {% endfor %}
 	</tbody>

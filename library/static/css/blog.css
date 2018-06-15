@@ -1,5 +1,4 @@
 
-
 body {
     padding-left: 20px;
 }
@@ -15,28 +14,24 @@ h2 {
 }
 
 h3 {
-    font-family: 'Merriweather', serif;
-    font-size: 18pt;
+    font-size: 16pt;
 }
 
 p {
-    font-family:'Merriweather', serif;
-    font-size: 16pt;
+    font-size: 14pt;
 }
 
-br, button {
-    font-family:'Merriweather', serif;
-    font-size: 12pt;
+br,button{
+    font-size: 10pt;
 }
 
 th {
-    font-family:'Merriweather', serif;
-    font-size: 16pt;
+    font-size: 14pt;
 }
 
 td {
     font-family: 'Goudy Bookletter 1911', serif;
-    font-size: 18pt;
+    font-size: 14pt;
 }
 
 

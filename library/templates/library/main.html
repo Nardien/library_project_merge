@@ -1,15 +1,57 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang='en'>
 <head>
 	<meta charset='UTF-8'>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+	<link href="https://fonts.googleapis.com/css?family=Goudy+Bookletter+1911" rel="stylesheet" type="text/css"> 
+	<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+	<style>
+	  body {
+	  position:relative;
+	  z-index:1;
+	  }
+	  body:after {
+	  background-image:url({% static 'css/bono.jpeg' %});
+	  top:0;
+	  left:0;
+	  position:absolute;
+	  background-size:100%;
+	  opacity:0.5!important;
+	  filter:alpha(opacity=50);
+	  z-index:-1;
+	  content:"";
+	  width:100%;
+	  height:100%;
+	  }
+
+	  table, th, td {
+	  border: 1px solid #bcbcbc;
+	  }
+	  table{
+	  width:40%;
+	  text-align:center;
+	  }
+	  th{
+	  text-align:center;
+	  padding:3px;
+	  width:150px;
+	  }
+	  td{
+	  text-align:center;
+	  padding:3px;
+	  }
+	</style>
 	<title>main</title>
 </head>
 <body>
 	<h1 align="center">Welcom to KAIST library service</h1>
-
+	<br>
 	<p align="center">
 		 <!--need to change button with login status -->
-	<a href="{% url 'return' %}"><button>checked-out books: {{ borrowing_count }}<br/>late fee: 0</button></a>
+	<a href="{% url 'return' %}"><button>checked-out books: {{ borrowing_count }}<br/>late fee: {{ fee }}</button></a>
 	<a href="{% url 'seminar_show' %}"><button>Seminar room reserved: {{ reserving_count }}</button></a>
 	<a href="{% url 'staff' %}"><button>Staff Information</button></a>
 	<!--need to change button with login status -->
@@ -28,9 +70,10 @@
 		<a href="{% url 'request' %}"><button>Book Buying Request</button></a>
 	</div>
     <br>
+    <br>
     <div align="center">
         <h3> POPULAR BOOK </h3>
-        <table width="45%" style="text-align:center">
+        <table>
             <thead>
                 <tr>
                     <th>Name</th>
